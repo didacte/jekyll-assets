@@ -14,7 +14,11 @@ module Jekyll
 
         def __wrap_find_asset(path, options = {})
           __orig_find_asset(path, options).tap do |asset|
-            asset.instance_variable_set :@site, @environment.site if asset
+            if asset
+              asset.instance_variable_set :@site, @environment.site
+              # Avoid removing assets by Jekyll:Cleaner
+              @environment.site.keep_files << asset.destination(@environment.site.dest)
+            end
           end
         end
       end
